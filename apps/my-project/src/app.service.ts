@@ -1,4 +1,5 @@
 import { SigninUserDto } from '@app/shared/lib/dto/signin-user.dto';
+import { User } from '@app/shared/lib/entities';
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy, ClientProxyFactory, Transport } from '@nestjs/microservices';
 
@@ -10,6 +11,9 @@ export class AppService {
     @Inject('VIDEO_SERVICE') private readonly videoServiceClient: ClientProxy,
   ) {}
 
+  public register(userdto: User): Promise<any> {
+    return this.authServiceClient.send<any, any>('register', userdto).toPromise();
+  }
   public signIn(signinUserdto: SigninUserDto): Promise<any> {
     return this.authServiceClient.send<any, any>('signIn', signinUserdto).toPromise();
   }

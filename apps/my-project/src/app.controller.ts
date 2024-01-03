@@ -1,9 +1,21 @@
 import { Body, Controller, Get, HttpException, HttpStatus, Post, Request } from '@nestjs/common';
 import { AppService } from './app.service';
 import { SigninUserDto } from '@app/shared/lib/dto/signin-user.dto';
+import { User } from '@app/shared/lib/entities';
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) { }
+
+  @Post('register')
+  async register(@Body() userdto: User): Promise<any> {
+    try {
+      let user = await this.appService.register(userdto);
+      return user;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   @Post('signin')
   async signIn(@Body() userdto: SigninUserDto): Promise<any> {
     try {
