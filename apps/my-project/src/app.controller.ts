@@ -1,16 +1,28 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Post, Request } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Inject, OnModuleInit, Post, Request } from '@nestjs/common';
 import { AppService } from './app.service';
 import { SigninUserDto } from '@app/shared/lib/dto/signin-user.dto';
 import { User } from '@app/shared/lib/entities';
+import { ClientKafka } from '@nestjs/microservices';
 @Controller()
-export class AppController {
-  constructor(private readonly appService: AppService) { }
+export class AppController implements OnModuleInit {
+  constructor(
+    private readonly appService: AppService,
+    @Inject('AUTH_SERVICE') private readonly authServiceClient: ClientKafka,
+  ) { }
+
+  onModuleInit() {
+    this.authServiceClient.subscribeToResponseOf('register');
+    this.authServiceClient.subscribeToResponseOf('signIn');
+    this.authServiceClient.subscribeToResponseOf('authenticateUser');
+    this.authServiceClient.subscribeToResponseOf('create_user');
+
+    this.authServiceClient.connect();
+  }
 
   @Post('register')
-  async register(@Body() userdto: User): Promise<any> {
+  async register(@Body() userdto: User) {
     try {
-      let user = await this.appService.register(userdto);
-      return user;
+      return this.appService.register(userdto);
     } catch (error) {
       throw error;
     }

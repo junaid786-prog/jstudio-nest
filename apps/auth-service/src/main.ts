@@ -6,9 +6,14 @@ import { AuthServiceModule } from './auth-service.module';
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice(AuthServiceModule, {
-    transport: Transport.TCP,
+    transport: Transport.KAFKA,
     options: {
-      port: 4000,
+      client: {
+        brokers: ['localhost:29092'],
+      },
+      consumer: {
+        groupId: 'auth-consumer',
+      },
     },
   });
   await app.listen();

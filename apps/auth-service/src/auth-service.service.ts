@@ -10,7 +10,6 @@ export class AuthServiceService {
     private usersService: UsersService,
     private jwtService: JwtService,
   ) { }
-
   getHello(name: string): string {
     return 'Hello World! ' + name + ' from auth-service';
   }

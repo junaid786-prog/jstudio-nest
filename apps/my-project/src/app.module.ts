@@ -10,11 +10,16 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
     ClientsModule.register([
       {
         name: 'AUTH_SERVICE',
-        transport: Transport.TCP,
+        transport: Transport.KAFKA,
         options: {
-          host: 'localhost',
-          port: 4000,
-        },
+          client: {
+            clientId: 'auth',
+            brokers: ['localhost:29092'],
+          },
+          consumer: {
+            groupId: 'auth-consumer',
+          },
+        }
       },
       {
         name: 'VIDEO_SERVICE',
@@ -29,4 +34,4 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }
